@@ -1,0 +1,9 @@
+---,Id,Count,Type
+Cup,"Cup","2","Consumable"
+Chest,"Chest","1","Consumable"
+Box,"Box","1","Miscellaneous"
+Bomb,"Bomb","10","Miscellaneous"
+Ace,"Ace","5","Equipment"
+Skull,"Skull","3","Equipment"
+Hammer,"Hammer","1","Equipment"
+Money,"Money","999","Currency"

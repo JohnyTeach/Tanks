@@ -1,0 +1,5 @@
+RowName,Id,Count,Type
+Ace,Ace,10,Equipment
+Chest,Chest,5,Miscellaneous
+Cup,Cup,1,Consumable
+Money,Money,1000, Currency
