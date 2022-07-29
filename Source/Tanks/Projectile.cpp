@@ -129,8 +129,8 @@ void AProjectile::DoDamage(const FHitResult& HitResult)
 		FDamageInfo DamageData;
 		DamageData.Damage = Damage;
 		DamageData.Instigator = GetInstigator();
-		DamageData.DamageMaker = this;
-		Damageable->TakeDamage(DamageData);		
+		DamageData.DamageMaker = this;		
+		Damageable->TakeDamage(DamageData);						
 	}
 	
 	if (OtherComp && OtherComp->IsSimulatingPhysics())

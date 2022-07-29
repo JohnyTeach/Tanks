@@ -19,7 +19,7 @@
 		{
 			"Name": "QuestSystem",
 			"Type": "Runtime",
-			"LoadingPhase": "PreDefault"
+			"LoadingPhase": "Default"
 		},
 		{
 			"Name": "QuestEditor",

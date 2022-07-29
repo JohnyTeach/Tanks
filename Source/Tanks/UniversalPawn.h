@@ -75,7 +75,7 @@ public:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Pawn")
 	bool bIsTankPawn = false;
 	
-	UPROPERTY()
+	UPROPERTY(BlueprintReadWrite)
 	ACannon* Cannon = nullptr;	
 
 	TankDeathEvent TankDeath;	

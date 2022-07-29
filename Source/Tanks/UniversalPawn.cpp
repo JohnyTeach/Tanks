@@ -17,7 +17,7 @@ AUniversalPawn::AUniversalPawn()
 	PrimaryActorTick.bCanEverTick = true;
 
 	USceneComponent* ScnComp = CreateDefaultSubobject<USceneComponent>(TEXT("Root"));
-	RootComponent = ScnComp;
+	RootComponent = ScnComp;	
 	
 	Collision = CreateDefaultSubobject<UBoxComponent>(TEXT("Collision"));
 	Collision->SetupAttachment(RootComponent);
@@ -64,9 +64,9 @@ void AUniversalPawn::TakeDamage(const FDamageInfo& DamageInfo)
 	//GEngine->AddOnScreenDebugMessage(5, 3, FColor::Red, FString::Printf(TEXT("!!!DAMAGE!!!")));
 	HitEffect->Activate(true);
 	HitAudioEffect->Activate(true);
-	
-	HealthComponent->TakeDamage(DamageInfo);	
-	
+
+	HealthComponent->TakeDamage(DamageInfo);
+			
 	SetHP();
 }
 
