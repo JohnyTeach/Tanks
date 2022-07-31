@@ -1,4 +1,8 @@
 #include "SavingsManager.h"
+
+#include <codecapi.h>
+
+#include "Turret.h"
 #include "Kismet/GameplayStatics.h"
 #include "Kismet/KismetStringLibrary.h"
 
@@ -70,17 +74,43 @@ bool USavingsManager::DoesSaveGameExist(const FString& SlotName)
 }
 
 void USavingsManager::LoadGame(const FString& SlotName)
-{		
-	UGameplayStatics::AsyncLoadGameFromSlot(SlotName, 0,FAsyncLoadGameFromSlotDelegate::CreateUObject(this, &USavingsManager::OnGameLoadedFromSlotHandle));
-	
-	GetWorld()->GetFirstPlayerController()->GetPawn()->SetActorRelativeLocation(CurrentGameObject->TankData.Location, true);
-	UKismetSystemLibrary::PrintString(CurrentGameObject,UKismetStringLibrary::Conv_VectorToString(CurrentGameObject->TankData.Location));
+{	
+	UGameplayStatics::AsyncLoadGameFromSlot(SlotName, 0,FAsyncLoadGameFromSlotDelegate::CreateUObject(this, &USavingsManager::OnGameLoadedFromSlotHandle));		
 }
 
 void USavingsManager::SaveCurrentGame(const FString& SlotName)
 {
-	CurrentGameObject->TankData.Location = GetWorld()->GetFirstPlayerController()->GetPawn()->GetActorLocation();
-	UKismetSystemLibrary::PrintString(CurrentGameObject,UKismetStringLibrary::Conv_VectorToString(CurrentGameObject->TankData.Location));	
+	// ==================================================== PLAYER ====================================================
+	auto Player = Cast<AUniversalPawn>(GetWorld()->GetFirstPlayerController()->GetPawn());
+	
+	if (IsValid(Player))
+	{
+		CurrentGameObject->TankData.Location = Player->GetActorLocation();
+		CurrentGameObject->TankData.Rotation = Player->GetActorRotation();
+		CurrentGameObject->TankData.Health = Player->GetHealthComponent()->GetHealth();
+		CurrentGameObject->TankData.Ammo = Player->GetCannon()->GetAmmo();
+	}
+	// ==================================================== PLAYER ====================================================
+	
+	// ================================================= ENEMY TANKS ==================================================
+
+	const FName Tag = "Enemy";
+	UGameplayStatics::GetAllActorsOfClassWithTag(this, ATurret::StaticClass(), Tag, CurrentGameObject->TurretData.Turrets);
+	
+	for (auto Target : CurrentGameObject->TurretData.Turrets)
+	{
+		auto SaveTurret = Cast<ATurret>(Target);
+	
+		if (IsValid(SaveTurret))
+		{
+			CurrentGameObject->TurretData.Location = SaveTurret->GetActorLocation();
+			CurrentGameObject->TurretData.Health = SaveTurret->GetHealthComponent()->GetHealth();
+		}
+	}
+	
+	// ================================================== ENEMY TANKS ==================================================
+
+	//CurrentGameObject->CollectData(GetWorld());
 	
 	UGameplayStatics::AsyncSaveGameToSlot(CurrentGameObject, SlotName, 0, FAsyncSaveGameToSlotDelegate::CreateUObject(this, &USavingsManager::OnGameSavedToSlotHandle));
 }
@@ -92,7 +122,36 @@ void USavingsManager::OnGameLoadedFromSlotHandle(const FString& SlotName, const 
     if (OnGameLoadedFromSlot.IsBound())
     {
 		OnGameLoadedFromSlot.Broadcast(SlotName);
-    }	
+    }
+
+	//CurrentGameObject->ApplyData(GetWorld());
+	
+	// ==================================================== PLAYER ====================================================
+	auto Player = Cast<AUniversalPawn>(GetWorld()->GetFirstPlayerController()->GetPawn());
+	
+	if (IsValid(Player))
+	{
+		Player->SetActorRelativeLocation(CurrentGameObject->TankData.Location, true);
+		Player->SetActorRelativeRotation(CurrentGameObject->TankData.Rotation,true);
+		Player->HealthComponent->CurrentHealth = CurrentGameObject->TankData.Health;
+		Player->GetCannon()->Ammunition = CurrentGameObject->TankData.Ammo;	
+	}
+	// ==================================================== PLAYER ====================================================
+
+	// ================================================= ENEMY TANKS ==================================================
+
+	for (auto Target : CurrentGameObject->TurretData.Turrets)
+	{
+		auto LoadTurret = Cast<ATurret>(Target);
+
+		if (IsValid(LoadTurret))
+		{
+			LoadTurret->SetActorLocation(CurrentGameObject->TurretData.Location);
+			LoadTurret->GetHealthComponent()->CurrentHealth = CurrentGameObject->TurretData.Health;
+		}		
+	}
+	
+	// ================================================= ENEMY TANKS ==================================================
 }
 
 void USavingsManager::OnGameSavedToSlotHandle(const FString& SlotName, const int32 UserIndex, bool bSuccess)

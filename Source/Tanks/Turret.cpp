@@ -64,3 +64,4 @@ int32 ATurret::GetScores()
 {
 	return DestructionScores;
 }
+

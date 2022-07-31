@@ -41,5 +41,5 @@ public:
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 
 	UPROPERTY(BlueprintReadWrite)
-	float CurrentHealth = 0;		
+	float CurrentHealth = 0;
 };

@@ -210,4 +210,3 @@ int32 ATankPawn::GetScores()
 {
 	return DestructionScores;
 }
-
