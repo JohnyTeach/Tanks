@@ -1,7 +1,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "TankPawn.h"
+#include "Turret.h"
 #include "GameFramework/SaveGame.h"
 #include "TankSaveGame.generated.h"
 
@@ -29,7 +29,13 @@ struct FEnemyTankData
 	GENERATED_BODY()
 	
 	UPROPERTY(BlueprintReadWrite)
-	int32 CountTanks;
+	TSubclassOf<ACannon> CannonClass;
+
+	UPROPERTY(BlueprintReadWrite)
+	FName WaypointTag;
+
+	UPROPERTY(BlueprintReadWrite)
+	float TargetRangeRadius;
 	
 	UPROPERTY(BlueprintReadWrite)
 	FVector Location;
@@ -47,7 +53,10 @@ struct FEnemyTurretData
 	GENERATED_BODY()
 
 	UPROPERTY(BlueprintReadWrite)
-	TArray<AActor*> Turrets;
+	TSubclassOf<ACannon> CannonClass;
+
+	UPROPERTY(BlueprintReadWrite)
+	float TargetRangeRadius;
 
 	UPROPERTY(BlueprintReadWrite)
 	FVector Location;
@@ -67,16 +76,8 @@ public:
 	FTanksData TankData;
 
 	UPROPERTY(BlueprintReadWrite)
-	FEnemyTankData EnemyTankData;
+	TArray<FEnemyTankData> EnemyTankData;
 
 	UPROPERTY(BlueprintReadWrite)
-	FEnemyTurretData TurretData;
-
-
-	UPROPERTY()
-	TArray<uint8> Bytes;
-
-	void CollectData(UWorld* World);
-
-	void ApplyData(UWorld* World);
+	TArray<FEnemyTurretData> TurretData;	
 };

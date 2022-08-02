@@ -68,6 +68,11 @@ void UHealthComponent::AddHealth(float AddHealth)
 	}
 }
 
+void UHealthComponent::SetCurrentHealth(float NewHealth)
+{
+	CurrentHealth = NewHealth;
+}
+
 void UHealthComponent::BeginPlay()
 {
 	Super::BeginPlay();

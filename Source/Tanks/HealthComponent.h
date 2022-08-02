@@ -31,6 +31,8 @@ public:
 	void TakeDamage(const FDamageInfo& DamageInfo);
 
 	void AddHealth(float AddHealth);
+
+	void SetCurrentHealth(float NewHealth);
 		
 	FDeathEvent OnDeath;
 

@@ -18,8 +18,6 @@ public:
 	virtual void Tick(float DeltaSeconds) override;
 	
 	virtual FVector GetTargetLocation() const override;
-	
-private:
 
 	TArray<FVector> Waypoints;
 

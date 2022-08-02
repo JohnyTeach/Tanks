@@ -9,14 +9,9 @@ ATurret::ATurret()
 
 void ATurret::BeginPlay()
 {
-	Super::BeginPlay();
-	
-	if (CannonClass)
-	{
-		auto Transform = CannonSpawnPoint->GetComponentTransform();	
-		Cannon = GetWorld()->SpawnActor<ACannon>(CannonClass, Transform);
-		Cannon->AttachToComponent(CannonSpawnPoint, FAttachmentTransformRules::SnapToTargetIncludingScale);	
-	}	
+	Super::BeginPlay();	
+
+	SetupCannon(CannonClass);
 }
 
 void ATurret::Tick(float DeltaSeconds)
