@@ -77,8 +77,9 @@ void USavingsManager::LoadGame(const FString& SlotName)
 }
 
 void USavingsManager::SaveCurrentGame(const FString& SlotName)
-{
+{ 
 	// ==================================================== SAVE PLAYER ====================================================
+	
 	auto Player = Cast<AUniversalPawn>(GetWorld()->GetFirstPlayerController()->GetPawn());
 	
 	if (IsValid(Player))
@@ -91,6 +92,8 @@ void USavingsManager::SaveCurrentGame(const FString& SlotName)
 	// ==================================================== SAVE PLAYER ====================================================
 
 	// ================================================== SAVE ENEMY TANK ==================================================
+	CurrentGameObject->EnemyTankData.Empty();
+
 	for (auto Target : GetAllEnemyOfClass(ATankPawn::StaticClass()))
 	{
 		auto SaveTankPawn = Cast<ATankPawn>(Target);
@@ -110,10 +113,12 @@ void USavingsManager::SaveCurrentGame(const FString& SlotName)
 	}	
 	// ================================================== SAVE ENEMY TANK ==================================================
 	
-	// ================================================ SAVE ENEMY TURRET ==================================================		
+	// ================================================ SAVE ENEMY TURRET ==================================================
+	CurrentGameObject->TurretData.Empty();
+	
 	for (auto Target : GetAllEnemyOfClass(ATurret::StaticClass()))
 	{
-		auto SaveTurret = Cast<ATurret>(Target);
+		auto SaveTurret = Cast<ATurret>(Target);		
 		
 		if (IsValid(SaveTurret))
 		{
@@ -132,7 +137,7 @@ void USavingsManager::SaveCurrentGame(const FString& SlotName)
 }
 
 void USavingsManager::SpawnEnemy(TSubclassOf<ATurret> SpawnTurret, TSubclassOf<ATankPawn> SpawnTank)
-{
+{	
 	// если в мире есть турели, находим все и удаляем
 	for (auto Turret : GetAllEnemyOfClass(ATurret::StaticClass()))
 	{
@@ -182,15 +187,16 @@ void USavingsManager::SpawnEnemy(TSubclassOf<ATurret> SpawnTurret, TSubclassOf<A
 		FTransform Transform;
 		Transform.SetLocation(CurrentGameObject->EnemyTankData[i].Location);
 		
-		auto NewTank = GetWorld()->SpawnActorDeferred<ATankPawn>(SpawnTank, Transform,	nullptr, nullptr, ESpawnActorCollisionHandlingMethod::AlwaysSpawn);
+		auto NewTank = GetWorld()->SpawnActorDeferred<ATankPawn>(SpawnTank, Transform,	nullptr, nullptr, ESpawnActorCollisionHandlingMethod::AlwaysSpawn);		
 		NewTank->SetActorRotation(CurrentGameObject->EnemyTankData[i].Rotation);
 		NewTank->WaypointTag = CurrentGameObject->EnemyTankData[i].WaypointTag;
 		NewTank->SetupCannon(CurrentGameObject->EnemyTankData[i].CannonClass);
 		NewTank->TargetRange->SetSphereRadius(CurrentGameObject->EnemyTankData[i].TargetRangeRadius);		
-		NewTank->GetHealthComponent()->SetCurrentHealth(CurrentGameObject->EnemyTankData[i].Health);
-		NewTank->SetHP();
 		
 		UGameplayStatics::FinishSpawningActor(NewTank, Transform);
+		
+		NewTank->GetHealthComponent()->SetCurrentHealth(CurrentGameObject->EnemyTankData[i].Health);		
+		NewTank->SetHP();
 	}	
 }
 
@@ -206,7 +212,7 @@ TArray<AActor*> USavingsManager::GetAllEnemyOfClass(TSubclassOf<AActor> EnemyCla
 
 void USavingsManager::OnGameLoadedFromSlotHandle(const FString& SlotName, const int32 UserIndex, USaveGame* SaveGame)
 {
-	CurrentGameObject = Cast<UTankSaveGame>(SaveGame);
+	CurrentGameObject = Cast<UTankSaveGame>(SaveGame);	
 	
     if (OnGameLoadedFromSlot.IsBound())
     {
